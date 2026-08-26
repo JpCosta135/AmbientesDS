@@ -1,0 +1,15 @@
+NullPointerException
+
+IndexOutOfBoundsException
+ArrayIndexOutOfBoundsException
+StringIndexOutOfBoundsException
+
+ArithmeticException
+ClassCastException
+IllegalArgumentException
+
+NumberFormatException
+DateTimeParseException
+IllegalStateException
+
+ 

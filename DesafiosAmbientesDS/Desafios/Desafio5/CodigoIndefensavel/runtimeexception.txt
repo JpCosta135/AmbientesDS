@@ -1,0 +1,18 @@
+1. Erros de Referência e Memória
+NullPointerException: Tentativa de usar um objeto não instanciado.
+
+2. Erros de Índice (Acessar posições inexistentes)
+IndexOutOfBoundsException: Categoria genérica para índices fora de alcance.
+
+ArrayIndexOutOfBoundsException: Específica para arrays ([]).
+StringIndexOutOfBoundsException: Específica para manipulação de Strings.
+
+3. Erros de Tipo e Conversão
+ClassCastException: Conversão inválida entre tipos de objetos.
+
+NumberFormatException: Falha ao converter String em número (subclasse de IllegalArgumentException).
+
+4. Erros de Lógica e Argumentos
+ArithmeticException: Operações matemáticas impossíveis (ex: divisão por zero).
+IllegalArgumentException: Quando um método recebe um argumento inválido.
+IllegalStateException: O método é chamado em um momento que o estado do objeto não permite.
