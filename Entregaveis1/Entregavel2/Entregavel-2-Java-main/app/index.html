@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheerpJ com JAR</title>
+  <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      margin-bottom: 18px;
+    }
+    h1, h2 { margin-top: 0; }
+    code, pre {
+      background: #111827;
+      color: #f9fafb;
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-family: Consolas, monospace;
+    }
+    pre {
+      padding: 14px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    #app {
+      width: 100%;
+      height: 520px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      background: #fff;
+    }
+    .status {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin-bottom: 14px;
+    }
+    .btn {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      border-radius: 10px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+    ul { line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Executar projeto Java com JAR no CheerpJ</h1>
+      <p>Esta versão é mais confiável do que compilar Java no navegador. Coloque seu <code>app.jar</code> na pasta <code>app</code> ao lado deste HTML e clique no botão.</p>
+      <div class="status" id="status">Aguardando execução.</div>
+      <button class="btn" id="runBtn">Rodar app.jar</button>
+    </div>
+
+    <div class="card">
+      <h2>Como usar</h2>
+      <ul>
+        <li>1. Gere o JAR do seu projeto Java no computador.</li>
+        <li>2. Salve este arquivo como <code>index.html</code>.</li>
+        <li>3. Crie a pasta <code>app</code> e coloque nela o arquivo <code>app.jar</code>.</li>
+        <li>4. Rode com um servidor local, não abrindo o HTML direto no navegador.</li>
+      </ul>
+      <pre>estrutura esperada:
+/
+  index.html
+  /app
+    app.jar</pre>
+    </div>
+
+    <div class="card">
+      <h2>Comandos para gerar o JAR</h2>
+      <p>Se sua classe principal for <code>Main</code>:</p>
+      <pre>javac *.java
+jar cfe app.jar Main *.class</pre>
+      <p>Se sua classe principal for <code>Principal</code>:</p>
+      <pre>javac *.java
+jar cfe app.jar Principal *.class</pre>
+      <p>Depois, mova o <code>app.jar</code> para a pasta <code>app</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>Servidor local</h2>
+      <pre>python -m http.server 8080</pre>
+      <p>Depois abra <code>http://localhost:8080</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>Área do aplicativo Java</h2>
+      <div id="app"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    const statusEl = document.getElementById("status");
+    const btn = document.getElementById("runBtn");
+
+    function setStatus(msg) {
+      statusEl.textContent = msg;
+    }
+
+    async function runJar() {
+      btn.disabled = true;
+      try {
+        setStatus("Inicializando CheerpJ...");
+        await cheerpjInit({ version: 17 });
+        setStatus("Criando área gráfica...");
+        cheerpjCreateDisplay(-1, -1, document.getElementById("app"));
+        setStatus("Executando /app/app17.jar ...");
+        await cheerpjRunJar("/app/app/app17.jar");
+        setStatus("Aplicação iniciada.");
+      } catch (err) {
+        console.error(err);
+        setStatus("Erro: " + (err?.message || err));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", runJar);
+  </script>
+</body>
+</html>

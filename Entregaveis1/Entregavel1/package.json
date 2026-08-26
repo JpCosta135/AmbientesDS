@@ -1,0 +1,15 @@
+{
+  "name": "entregavel1-main",
+  "version": "1.0.0",
+  "description": "Entregável #1 - Algoritmos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^30.3.0"
+  }
+}

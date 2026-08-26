@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Executor - JavaScript & Java</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --js-color: #2a9d8f;
+            --java-color: #e76f51;
+            --dark: #264653;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #2a9d8f;
+            --error: #e63946;
+            --warning: #e9c46a;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--java-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .panels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(650px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .panels-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
+            padding: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .js-header {
+            background: linear-gradient(90deg, var(--js-color), #218c74);
+        }
+
+        .java-header {
+            background: linear-gradient(90deg, var(--java-color), #d45d3d);
+        }
+
+        .panel-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-upload {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f1f3f5;
+            border-radius: 10px;
+            border: 2px dashed #adb5bd;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e9ecef;
+        }
+
+        .file-upload i {
+            font-size: 2.5rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .file-upload p {
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .file-btn:hover {
+            background: #3651d4;
+        }
+
+        .editor-container {
+            flex-grow: 1;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        #js-editor, #java-editor {
+            height: 300px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-run {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-run:hover:not(:disabled) {
+            background: #218c74;
+            transform: translateY(-2px);
+        }
+
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #3651d4;
+            transform: translateY(-2px);
+        }
+
+        .output-container {
+            background: #2b2d42;
+            color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 180px;
+            max-height: 250px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #495057;
+        }
+
+        .output-header h3 {
+            font-size: 1.3rem;
+            color: #4cc9f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .output-content {
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .success {
+            color: #2a9d8f;
+        }
+
+        .error {
+            color: #e63946;
+        }
+
+        .info {
+            color: #4cc9f0;
+        }
+
+        .warning {
+            color: #e9c46a;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-ready {
+            background-color: var(--success);
+        }
+
+        .status-loading {
+            background-color: var(--warning);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .status-error {
+            background-color: var(--error);
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .cheerpj-status {
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #856404;
+        }
+
+        .cheerpj-status.hidden {
+            display: none;
+        }
+
+        .cheerpj-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .cheerpj-status.success {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .cheerpj-status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> Algorithm Executor</h1>
+            <p class="subtitle">Upload, edit, and execute JavaScript and Java algorithms directly in your browser. Supports file loading and saving.</p>
+        </header>
+
+        <div class="panels-container">
+            <!-- JavaScript Panel -->
+            <div class="panel">
+                <div class="panel-header js-header">
+                    <h2><i class="fab fa-js"></i> JavaScript Executor</h2>
+                    <div>
+                        <span class="status-indicator status-ready"></span>
+                        <span>Ready</span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="file-upload">
+                        <i class="fas fa-file-upload"></i>
+                        <p>Upload a JavaScript file to execute</p>
+                        <label for="js-file" class="file-btn">
+                            <i class="fas fa-folder-open"></i> Choose File
+                        </label>
+                        <input type="file" id="js-file" class="file-input" accept=".js">
+                        <div class="file-name" id="js-file-name">No file selected</div>
+                    </div>
+                    
+                    <div class="editor-container">
+                        <div id="js-editor"></div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button id="run-js" class="btn btn-run">
+                            <i class="fas fa-play"></i> Run JavaScript
+                        </button>
+                        <button id="clear-js" class="btn btn-clear">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                        <button id="save-js" class="btn btn-save">
+                            <i class="fas fa-download"></i> Save JS
+                        </button>
+                    </div>
+                    
+                    <div class="output-container">
+                        <div class="output-header">
+                            <h3><i class="fas fa-terminal"></i> Output</h3>
+                            <div>
+                                <span class="status-indicator status-ready"></span>
+                                <span>Ready</span>
+                            </div>
+                        </div>
+                        <div id="js-output" class="output-content">Results will appear here...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Java Panel -->
+            <div class="panel">
+                <div class="panel-header java-header">
+                    <h2><i class="fab fa-java"></i> Java Executor</h2>
+                    <div>
+                        <span class="status-indicator status-ready"></span>
+                        <span>Ready</span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="file-upload">
+                        <i class="fas fa-file-upload"></i>
+                        <p>Upload a Java file to execute</p>
+                        <label for="java-file" class="file-btn">
+                            <i class="fas fa-folder-open"></i> Choose File
+                        </label>
+                        <input type="file" id="java-file" class="file-input" accept=".java">
+                        <div class="file-name" id="java-file-name">No file selected</div>
+                    </div>
+                    
+                    <div class="cheerpj-status hidden" id="cheerpj-status">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="cheerpj-message">Initializing CheerpJ runtime...</span>
+                    </div>
+                    
+                    <div class="editor-container">
+                        <div id="java-editor"></div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button id="run-java" class="btn btn-run">
+                            <i class="fas fa-play"></i> Run Java
+                        </button>
+                        <button id="clear-java" class="btn btn-clear">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                        <button id="save-java" class="btn btn-save">
+                            <i class="fas fa-download"></i> Save Java
+                        </button>
+                    </div>
+                    
+                    <div class="output-container">
+                        <div class="output-header">
+                            <h3><i class="fas fa-terminal"></i> Output</h3>
+                            <div>
+                                <span class="status-indicator status-ready"></span>
+                                <span>Ready</span>
+                            </div>
+                        </div>
+                        <div id="java-output" class="output-content">Results will appear here...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Note: Java execution uses CheerpJ (browser-based JVM). Complex algorithms may take longer to execute.</p>
+            <p>JavaScript execution runs in your browser's sandbox environment. Files are processed locally and never leave your computer.</p>
+        </footer>
+    </div>
+
+    <!-- Include Ace Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+    
+    <script>
+        // Initialize editors
+        const jsEditor = ace.edit("js-editor", {
+            mode: "ace/mode/javascript", 
+            theme: "ace/theme/clouds", 
+            fontSize: "14px", 
+            showPrintMargin: false, 
+            highlightActiveLine: true, 
+            value: `// Example: Fibonacci sequence
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// Calculate and display result
+console.log("Fibonacci(10) =", fibonacci(10));
+console.log("Current time: ", new Date().toLocaleTimeString());
+
+// Bubble sort example
+function bubbleSort(arr) {
+    let n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+    }
+    return arr;
+}
+
+let numbers = [64, 34, 25, 12, 22, 11, 90];
+console.log("Original array: ", numbers);
+console.log("Sorted array: ", bubbleSort([...numbers]));`
+        });
+
+        const javaEditor = ace.edit("java-editor", {
+            mode: "ace/mode/java", 
+            theme: "ace/theme/clouds", 
+            fontSize: "14px", 
+            showPrintMargin: false, 
+            highlightActiveLine: true, 
+            value: `// Example: Simple Java program
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Java!");
+        System.out.println("Current time: " + new java.util.Date());
+        
+        // Example calculation
+        int result = factorial(5);
+        System.out.println("5! = " + result);
+        
+        // Bubble sort example
+        int[] numbers = {64, 34, 25, 12, 22, 11, 90};
+        System.out.println("Original array: " + java.util.Arrays.toString(numbers));
+        bubbleSort(numbers);
+        System.out.println("Sorted array: " + java.util.Arrays.toString(numbers));
+    }
+    
+    public static int factorial(int n) {
+        if (n <= 1) return 1;
+        return n * factorial(n - 1);
+    }
+    
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    // Swap elements
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+}`
+        });
+
+        // DOM Elements
+        const jsOutput = document.getElementById('js-output');
+        const javaOutput = document.getElementById('java-output');
+        const runJsBtn = document.getElementById('run-js');
+        const runJavaBtn = document.getElementById('run-java');
+        const clearJsBtn = document.getElementById('clear-js');
+        const clearJavaBtn = document.getElementById('clear-java');
+        const saveJsBtn = document.getElementById('save-js');
+        const saveJavaBtn = document.getElementById('save-java');
+        const jsFileInput = document.getElementById('js-file');
+        const javaFileInput = document.getElementById('java-file');
+        const jsFileName = document.getElementById('js-file-name');
+        const javaFileName = document.getElementById('java-file-name');
+        const cheerpjStatus = document.getElementById('cheerpj-status');
+        const cheerpjMessage = document.getElementById('cheerpj-message');
+
+        // File handling for JavaScript
+        jsFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                jsFileName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    jsEditor.setValue(e.target.result, -1);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // File handling for Java
+        javaFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                javaFileName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    javaEditor.setValue(e.target.result, -1);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Save JavaScript file
+        saveJsBtn.addEventListener('click', function() {
+            const content = jsEditor.getValue();
+            const blob = new Blob([content], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'algorithm.js';
+            document.body.appendChild(a);
+            a.click();
+            
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 0);
+        });
+
+        // Save Java file
+        saveJavaBtn.addEventListener('click', function() {
+            const content = javaEditor.getValue();
+            const blob = new Blob([content], { type: 'text/x-java' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Main.java';
+            document.body.appendChild(a);
+            a.click();
+            
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 0);
+        });
+
+        // JavaScript Execution
+        runJsBtn.addEventListener('click', () => {
+            jsOutput.innerHTML = '';
+            try {
+                // Capture console.log output
+                const logs = [];
+                const originalLog = console.log;
+                console.log = (...args) => {
+                    logs.push(args.join(' '));
+                    originalLog.apply(console, args);
+                };
+
+                // Execute code
+                eval(jsEditor.getValue());
+
+                // Restore console.log
+                console.log = originalLog;
+
+                // Display output
+                jsOutput.innerHTML = logs.join('\n') || 'Execution completed (no output)';
+                jsOutput.className = 'output-content success';
+            } catch (error) {
+                jsOutput.innerHTML = `Error: ${error.message}`;
+                jsOutput.className = 'output-content error';
+            }
+        });
+
+        // Java Execution
+        let cheerpjInitialized = false;
+        let cheerpjInitializing = false;
+
+        function showCheerpjStatus(message, type = 'info') {
+            cheerpjStatus.classList.remove('hidden', 'error', 'success', 'loading');
+            cheerpjMessage.textContent = message;
+            
+            switch(type) {
+                case 'error': 
+                    cheerpjStatus.classList.add('error');
+                    break;
+                case 'success': 
+                    cheerpjStatus.classList.add('success');
+                    break;
+                case 'loading': 
+                    cheerpjStatus.classList.add('loading');
+                    break;
+                default: 
+                    cheerpjStatus.classList.add('loading');
+            }
+            
+            cheerpjStatus.classList.remove('hidden');
+        }
+
+        function hideCheerpjStatus() {
+            cheerpjStatus.classList.add('hidden');
+        }
+
+        async function initializeCheerpj() {
+            if (cheerpjInitialized) return true;
+            if (cheerpjInitializing) return false;
+            
+            cheerpjInitializing = true;
+            showCheerpjStatus('Loading CheerpJ runtime (this may take a moment)...', 'loading');
+            
+            try {
+                // Dynamically load CheerpJ
+                const script = document.createElement('script');
+                script.src = 'https://cjrtnc.leaningtech.com/2.3/loader.js';
+                document.head.appendChild(script);
+                
+                // Wait for script to load
+                await new Promise((resolve, reject) => {
+                    script.onload = resolve;
+                    script.onerror = () => reject(new Error('Failed to load CheerpJ'));
+                });
+                
+                // Initialize CheerpJ
+                await new Promise((resolve) => {
+                    cheerpjInit({
+                        enableApplets: false, 
+                        enableWebGL: false, 
+                        enableDesktop: false, 
+                        javaProperties: {
+                            "java.awt.headless": "true"
+                        }
+                    });
+                    cheerpjCreateDisplay(1024, 768, document.body);
+                    resolve();
+                });
+                
+                cheerpjInitialized = true;
+                cheerpjInitializing = false;
+                showCheerpjStatus('CheerpJ initialized successfully!', 'success');
+                setTimeout(hideCheerpjStatus, 3000);
+                return true;
+            } catch (error) {
+                console.error('CheerpJ initialization failed: ', error);
+                cheerpjInitializing = false;
+                showCheerpjStatus(`CheerpJ initialization failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Helper function for Java compilation
+        function cjCompile(source, fileName) {
+            return new Promise((resolve, reject) => {
+                const compiler = new cheerpj.JARLoader();
+                compiler.compile(source, fileName, (err, result) => {
+                    if (err) reject(new Error(err));
+                    else resolve(result);
+                });
+            });
+        }
+
+        // Helper function for Java execution
+        function cjRunMain(classFiles, mainClass) {
+            return new Promise((resolve, reject) => {
+                const outputBuffer = [];
+                const originalOut = java.lang.System.out;
+                const originalErr = java.lang.System.err;
+                
+                // Capture output
+                java.lang.System.out = {
+                    println: function(str) {
+                        outputBuffer.push(str);
+                    }, 
+                    print: function(str) {
+                        outputBuffer.push(str);
+                    }
+                };
+                
+                java.lang.System.err = {
+                    println: function(str) {
+                        outputBuffer.push("ERROR: " + str);
+                    }
+                };
+                
+                try {
+                    // Run the main class
+                    cheerpjRunMain(classFiles, mainClass, () => {
+                        // Restore original streams
+                        java.lang.System.out = originalOut;
+                        java.lang.System.err = originalErr;
+                        resolve(outputBuffer.join('\n'));
+                    });
+                } catch (e) {
+                    // Restore original streams
+                    java.lang.System.out = originalOut;
+                    java.lang.System.err = originalErr;
+                    reject(e);
+                }
+            });
+        }
+
+        // Java Execution
+        runJavaBtn.addEventListener('click', async () => {
+            javaOutput.innerHTML = '<span class="info">Initializing Java environment...</span>';
+            
+            try {
+                // Initialize CheerpJ if not already done
+                if (!cheerpjInitialized) {
+                    const success = await initializeCheerpj();
+                    if (!success) {
+                        javaOutput.innerHTML = '<span class="error">Failed to initialize Java runtime. Please check your connection and try again.</span>';
+                        return;
+                    }
+                }
+
+                // Get Java code
+                const javaCode = javaEditor.getValue();
+                
+                // Compile and run
+                javaOutput.innerHTML = '<span class="info">Compiling Java code...</span>';
+                const classFiles = await cjCompile(javaCode, "Main.java");
+                
+                javaOutput.innerHTML = '<span class="info">Running Java program...</span>';
+                const output = await cjRunMain(classFiles, "Main");
+                
+                javaOutput.innerHTML = output || 'Execution completed (no output)';
+                javaOutput.className = 'output-content success';
+            } catch (error) {
+                javaOutput.innerHTML = `Error: ${error.message}`;
+                javaOutput.className = 'output-content error';
+            }
+        });
+
+        // Clear buttons
+        clearJsBtn.addEventListener('click', () => {
+            jsEditor.setValue('', -1);
+            jsOutput.innerHTML = 'Results will appear here...';
+            jsOutput.className = 'output-content';
+            jsFileName.textContent = 'No file selected';
+            jsFileInput.value = '';
+        });
+
+        clearJavaBtn.addEventListener('click', () => {
+            javaEditor.setValue('', -1);
+            javaOutput.innerHTML = 'Results will appear here...';
+            javaOutput.className = 'output-content';
+            javaFileName.textContent = 'No file selected';
+            javaFileInput.value = '';
+        });
+
+        // Initialize CheerpJ on first Java execution attempt
+        window.addEventListener('load', async () => {
+            // No automatic initialization - only initialize when user runs Java code
+        });
+    </script>
+</body>
+</html>
